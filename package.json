@@ -1,0 +1,26 @@
+{
+  "name": "namastenodebeproject",
+  "version": "1.0.0",
+  "description": "backend project",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon src/app.js",
+    "start": "node src/app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/akshay7745/devConnections.git"
+  },
+  "author": "Akshay Patil",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/akshay7745/devConnections/issues"
+  },
+  "homepage": "https://github.com/akshay7745/devConnections#readme",
+  "dependencies": {
+    "express": "^5.1.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.10"
+  }
+}
