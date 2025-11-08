@@ -84,3 +84,31 @@ app.get("/", (req, res) => {
 app.listen(7777, () => {
   console.log("App is up and running on port number 7777");
 });
+
+// practising auth middleware
+const { adminAuth, userAuth } = require("../middlewares/auth.js");
+
+app.get("/admin/dashboard", adminAuth, (req, res) => {
+  res.send("welcome to admin dashboard");
+});
+
+app.get("/user/profile", userAuth, (req, res) => {
+  res.send("welcome to user profile");
+});
+
+app.post("/user/login", (req, res) => {
+  res.send("user logged in successfully");
+});
+/**
+ * This is the most common way of defining middleware in express
+ * Here we are authenticating admin and user before allowing them to access their respective routes
+ * But suppose there is a scenario where we want to apply a middleware to all the routes in the application
+ * In that case we can use app.use() method to define a middleware that will be applied to all the routes
+ * Here is an example of how to do that
+ *
+ * app.use((req,res,next)=>{
+ * console.log("This middleware will be applied to all the routes");
+ * next();
+ * });
+ * Now this middleware will be executed for every request made to the server before reaching to any route handler but this middleware should be defined before defining any route handlers or at the top of the file
+ */

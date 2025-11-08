@@ -10,7 +10,7 @@ const adminAuth = (req, res, next) => {
 };
 
 const userAuth = (req, res, next) => {
-  const userToken = "userlslsls";
+  const userToken = "userxlslsls";
   if (userToken === "userlslsls") {
     console.log("User authenticated");
     next();
