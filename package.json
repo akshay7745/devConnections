@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "nodemon src/app.js",
     "start": "node src/app.js",
+    "err": "nodemon src/errorHandling.js",
     "middleware": "nodemon src/middlewares.js"
   },
   "repository": {
