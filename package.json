@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "dev": "nodemon src/app.js",
-    "start": "node src/app.js"
+    "start": "node src/app.js",
+    "middleware": "nodemon src/middlewares.js"
   },
   "repository": {
     "type": "git",
