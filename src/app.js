@@ -34,6 +34,47 @@ app.post("/signup", async (req, res) => {
   }
 });
 
+app.post("/updateUser/:id", async (req, res) => {
+  const { id } = req.params;
+  User.findByIdAndUpdate(id, req.body, {
+    runValidators: true,
+    returnDocument: "after",
+  });
+});
+
+app.get("/userOne", async (req, res) => {
+  const userEmail = req.body.email;
+  try {
+    const user = await User.findOne({ email: userEmail });
+    if (!user) {
+      return res.status(404).send("User not found");
+    } else {
+      res.status(200).json({ user: user });
+    }
+  } catch (error) {
+    res.status(500).send("Error fetching user data");
+  }
+});
+
+app.get("/feed", async (req, res) => {
+  try {
+    const users = await User.find({});
+    if (users.length === 0) {
+      res.status(404).send("No users found");
+    } else {
+      res.status(200).json({ users });
+    }
+  } catch (error) {
+    res.status(500).send("Error fetching users data");
+  }
+});
+
+app.get("/userById/:id", async (req, res) => {
+  const { id } = req.params;
+  console.log("userId", id);
+  const userData = await User.findById(id, "firstName email").exec();
+  res.status(200).json(userData);
+});
 connectDB()
   .then((res) => {
     console.log("db connected successfully");
