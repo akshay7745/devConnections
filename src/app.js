@@ -36,10 +36,42 @@ app.post("/signup", async (req, res) => {
 
 app.post("/updateUser/:id", async (req, res) => {
   const { id } = req.params;
-  User.findByIdAndUpdate(id, req.body, {
-    runValidators: true,
-    returnDocument: "after",
+
+  const allowedValues = [
+    "firstName",
+    "lastName",
+    "age",
+    "gender",
+    "address",
+    "skills",
+    "isMarried",
+    "photoUrl",
+  ];
+
+  const allowUpdate = Object.keys(req.body).every((key) => {
+    return allowedValues.includes(key);
   });
+  try {
+    if (!allowUpdate) {
+      return res.status(400).send("Invalid updates!");
+    }
+
+    if (req.body?.skills.length > 10) {
+      return res.status(400).send("Skills cannot be more than 10");
+    }
+
+    const updatedUser = await User.findByIdAndUpdate(id, req.body, {
+      runValidators: true,
+      returnDocument: "after",
+    });
+
+    res.status(200).json({
+      message: "User updated successfully",
+      user: updatedUser,
+    });
+  } catch (error) {
+    res.status(500).send("Error updating user data " + error.message);
+  }
 });
 
 app.get("/userOne", async (req, res) => {

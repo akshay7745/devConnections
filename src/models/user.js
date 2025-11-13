@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const validator = require("validator");
 
 const userSchema = new mongoose.Schema(
   {
@@ -9,6 +10,11 @@ const userSchema = new mongoose.Schema(
       trim: true,
       minLength: 4,
       maxLength: 30,
+      validate(value) {
+        if (!validator.isAlpha(value)) {
+          throw new Error("Provide valid name");
+        }
+      },
     },
     lastName: {
       type: String,
@@ -16,6 +22,11 @@ const userSchema = new mongoose.Schema(
       maxLength: 30,
       trim: true,
       lowercase: true,
+      validate(value) {
+        if (!validator.isAlpha(value)) {
+          throw new Error("Provide valid input");
+        }
+      },
     },
     email: {
       type: String,
@@ -25,20 +36,31 @@ const userSchema = new mongoose.Schema(
       unique: true,
       trim: true,
       lowercase: true,
+      validate(value) {
+        if (!validator.isEmail(value)) {
+          throw new Error("Email is invalid");
+        }
+      },
     },
     password: {
       type: String,
       required: true,
       trim: true,
       minLength: 8,
+      validator(value) {
+        if (!validator.isStrongPassword(value)) {
+          throw new Error("Password is not strong enough");
+        }
+      },
     },
     age: {
-      type: [Number, "Age must be a number"],
+      type: Number,
       min: 18,
       max: 65,
     },
     gender: {
       type: String,
+      trim: true,
       validate(value) {
         const genders = ["male", "female", "other"];
         if (!genders.includes(value.toLowerCase())) {
@@ -59,12 +81,16 @@ const userSchema = new mongoose.Schema(
     },
     skills: {
       type: [[String, "Provide meaningful skills"]],
-      default: [],
     },
     photoUrl: {
       type: String,
       default:
         "https://www.murrayglass.com/wp-content/uploads/2020/10/avatar-1024x1024.jpeg",
+      validate(value) {
+        if (!validator.isURL(value)) {
+          throw new Error("Photo URL is invalid");
+        }
+      },
     },
   },
   {
