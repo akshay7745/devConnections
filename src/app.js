@@ -8,12 +8,14 @@ const cookieParser = require("cookie-parser");
 
 const { authRouter } = require("./routes/auth.js");
 const { profileRouter } = require("./routes/profile.js");
+const { passwordRoute } = require("./routes/password.js");
 
 app.use(express.json());
 app.use(cookieParser());
 
 app.use("/", authRouter);
 app.use("/", profileRouter);
+app.use("/", passwordRoute);
 
 app.get("/userById/:id", async (req, res) => {
   const { id } = req.params;
@@ -21,6 +23,7 @@ app.get("/userById/:id", async (req, res) => {
   const userData = await User.findById(id, "firstName email").exec();
   res.status(200).json(userData);
 });
+
 connectDB()
   .then((res) => {
     console.log("db connected successfully");
