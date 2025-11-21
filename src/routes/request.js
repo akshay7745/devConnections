@@ -76,4 +76,45 @@ connectionRequestRoute.post(
   }
 );
 
+connectionRequestRoute.post(
+  "/connection/review/:status/:requestId",
+  userAuth,
+  async (req, res, next) => {
+    try {
+      const { status, requestId } = req.params;
+      const allowedStatusValues = ["accepted", "rejected"];
+
+      if (!allowedStatusValues.includes(status)) {
+        throw new Error(`Invalid status value: ${status}`);
+      }
+
+      const isConnectionRequestValid = await ConnectionRequest.findOne({
+        _id: requestId,
+        toUserId: req.user._id,
+        status: "interested",
+      });
+
+      if (!isConnectionRequestValid) {
+        throw new Error("Invalid connection review request");
+      }
+
+      isConnectionRequestValid.status = status;
+      const updatedConnection = await isConnectionRequestValid.save();
+
+      res.status(200).json({
+        message:
+          status === "accepted"
+            ? `${req.user.firstName}, you have added the connection to your network successfully`
+            : `${req.user.firstName} you have rejected connection request`,
+        data: updatedConnection,
+      });
+    } catch (error) {
+      res.status(500).json({
+        message:
+          "Something went wrong while reviewing the connection request " +
+          error.message,
+      });
+    }
+  }
+);
 module.exports = { connectionRequestRoute };
