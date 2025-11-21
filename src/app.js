@@ -9,13 +9,14 @@ const cookieParser = require("cookie-parser");
 const { authRouter } = require("./routes/auth.js");
 const { profileRouter } = require("./routes/profile.js");
 const { passwordRoute } = require("./routes/password.js");
-
+const { connectionRequestRoute } = require("./routes/request.js");
 app.use(express.json());
 app.use(cookieParser());
 
 app.use("/", authRouter);
 app.use("/", profileRouter);
 app.use("/", passwordRoute);
+app.use("/", connectionRequestRoute);
 
 app.get("/userById/:id", async (req, res) => {
   const { id } = req.params;
