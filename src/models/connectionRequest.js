@@ -36,6 +36,15 @@ connectionRequestSchema.index(
   }
 );
 
+connectionRequestSchema.index({
+  toUserId: 1,
+  status: 1,
+});
+connectionRequestSchema.index({
+  fromUserId: 1,
+  status: 1,
+});
+
 // The method attached below will run each time , before saving the connection request schema
 
 connectionRequestSchema.pre("save", function (next) {
