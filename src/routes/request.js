@@ -93,7 +93,7 @@ connectionRequestRoute.post(
         toUserId: req.user._id,
         status: "interested",
       });
-
+      console.log("isConnectionRequestValid ", isConnectionRequestValid);
       if (!isConnectionRequestValid) {
         throw new Error("Invalid connection review request");
       }

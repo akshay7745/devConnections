@@ -10,6 +10,7 @@ const { authRouter } = require("./routes/auth.js");
 const { profileRouter } = require("./routes/profile.js");
 const { passwordRoute } = require("./routes/password.js");
 const { connectionRequestRoute } = require("./routes/request.js");
+const { userRouter } = require("./routes/user.js");
 app.use(express.json());
 app.use(cookieParser());
 
@@ -17,6 +18,7 @@ app.use("/", authRouter);
 app.use("/", profileRouter);
 app.use("/", passwordRoute);
 app.use("/", connectionRequestRoute);
+app.use("/", userRouter);
 
 app.get("/userById/:id", async (req, res) => {
   const { id } = req.params;
