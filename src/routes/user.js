@@ -60,6 +60,13 @@ userRouter.get("/user/connections", userAuth, async (req, res, next) => {
 userRouter.get("/feed", userAuth, async (req, res, next) => {
   try {
     const loggedInUser = req.user;
+    let limit = req.query.limit || 10;
+    let page = req.query.page || 1;
+
+    limit = limit > 50 ? 50 : limit;
+
+    const skip = (page - 1) * limit;
+
     const allConnectionRequests = await ConnectionRequest.find({
       $or: [{ fromUserId: loggedInUser }, { toUserId: loggedInUser }],
     }).populate("fromUserId toUserId", "firstName skills");
@@ -83,19 +90,19 @@ userRouter.get("/feed", userAuth, async (req, res, next) => {
           _id: { $ne: loggedInUser._id },
         },
       ],
-    }).select("firstName lastName skills photoUrl");
+    })
+      .select("firstName lastName skills photoUrl")
+      .limit(limit)
+      .skip(skip);
 
     res.status(200).json({
       message: "Users fetched successfully",
       data: showUsersOnFeed,
     });
   } catch (error) {
-    res
-      .status(400)
-      .json({
-        message:
-          "Something went wrong while fetching feed data " + error.message,
-      });
+    res.status(400).json({
+      message: "Something went wrong while fetching feed data " + error.message,
+    });
   }
 });
 
