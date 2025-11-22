@@ -1,7 +1,7 @@
 const express = require("express");
 const { userAuth } = require("../middleware/auth");
 const ConnectionRequest = require("../models/connectionRequest");
-const { find } = require("../models/user");
+const User = require("../models/user");
 
 const userRouter = express.Router();
 
@@ -55,6 +55,48 @@ userRouter.get("/user/connections", userAuth, async (req, res, next) => {
     return connection.fromUserId;
   });
   res.status(200).json({ data: connectedUsers });
+});
+
+userRouter.get("/feed", userAuth, async (req, res, next) => {
+  try {
+    const loggedInUser = req.user;
+    const allConnectionRequests = await ConnectionRequest.find({
+      $or: [{ fromUserId: loggedInUser }, { toUserId: loggedInUser }],
+    }).populate("fromUserId toUserId", "firstName skills");
+
+    const hideUsersOnFeed = new Set();
+
+    allConnectionRequests.length &&
+      allConnectionRequests.forEach((connection) => {
+        hideUsersOnFeed.add(connection.fromUserId.toString());
+        hideUsersOnFeed.add(connection.toUserId.toString());
+      });
+
+    const hideUsersOnFeedArray = Array.from(hideUsersOnFeed);
+    console.log("hideUsersOnFeedArray", hideUsersOnFeedArray);
+    const showUsersOnFeed = await User.find({
+      $and: [
+        {
+          _id: { $nin: hideUsersOnFeedArray },
+        },
+        {
+          _id: { $ne: loggedInUser._id },
+        },
+      ],
+    }).select("firstName lastName skills photoUrl");
+
+    res.status(200).json({
+      message: "Users fetched successfully",
+      data: showUsersOnFeed,
+    });
+  } catch (error) {
+    res
+      .status(400)
+      .json({
+        message:
+          "Something went wrong while fetching feed data " + error.message,
+      });
+  }
 });
 
 module.exports = { userRouter };
